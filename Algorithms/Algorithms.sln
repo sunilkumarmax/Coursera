@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coursera.Algorithms.ClassLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Coursera.Algorithms.Playground", "Coursera.Algorithms.Playground\Coursera.Algorithms.Playground.csproj", "{E04F60E3-B1CB-4751-828C-744866B3C566}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Coursera.Algorithms.Python", "Coursera.Algorithms.Python\Coursera.Algorithms.Python.pyproj", "{98F75C5E-D693-46F6-ADB1-35B291DA7EC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,8 @@ Global
 		{E04F60E3-B1CB-4751-828C-744866B3C566}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E04F60E3-B1CB-4751-828C-744866B3C566}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E04F60E3-B1CB-4751-828C-744866B3C566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F75C5E-D693-46F6-ADB1-35B291DA7EC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F75C5E-D693-46F6-ADB1-35B291DA7EC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

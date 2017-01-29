@@ -10,18 +10,22 @@
         private const string ZERO = "0";
         private char[] NUMBERS = { '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
-        public NumberString(string number)
+        public NumberString(string number, bool ignoreZeroPrefix = true)
         {
-            int indexOfNumber = number.IndexOfAny(NUMBERS);
-            if (indexOfNumber == -1)
+            this.number = string.IsNullOrEmpty(number) ? "0" : number;
+            if (ignoreZeroPrefix)
             {
-                this.number = "0";
-            }
-            else
-            {
-                bool isNegative = (number[0] - '-' == 0);
-                number = number.Substring(indexOfNumber);
-                this.number = string.IsNullOrEmpty(number) ? "0" : (isNegative ? "-" + number : number);
+                int indexOfNumber = number.IndexOfAny(NUMBERS);
+                if (indexOfNumber == -1)
+                {
+                    this.number = "0";
+                }
+                else
+                {
+                    bool isNegative = (number[0] - '-' == 0);
+                    number = number.Substring(indexOfNumber);
+                    this.number = isNegative ? "-" + number : number;
+                }
             }
         }
 
@@ -33,6 +37,11 @@
         public NumberString(int number)
         {
             this.number = number.ToString();
+        }
+
+        public NumberString Clone()
+        {
+            return new NumberString(this.number);
         }
 
         public bool IsNegative()
@@ -160,7 +169,7 @@
             }
             x = swap ? anotherNumber.Number.ToCharArray() : this.number.ToCharArray();
             y = swap ? this.number.ToCharArray() : anotherNumber.Number.ToCharArray();
-            char[] sum = new char[x.Length];
+            char[] difference = new char[x.Length];
             int borrow = 0;
             bool stillBorrow = false;
             for (int iterX = x.Length - 1, iterY = y.Length - 1; iterX >= 0; iterX--, iterY--)
@@ -199,9 +208,9 @@
                         borrow = 1;
                     }
                 }
-                sum[iterX] = Convert.ToChar(miniDifference + 48);
+                difference[iterX] = Convert.ToChar(miniDifference + 48);
             }
-            string finalDiff = new string(sum);
+            string finalDiff = new string(difference);
             int indexOfNumber = finalDiff.IndexOfAny(NUMBERS);
             finalDiff = finalDiff.Substring(indexOfNumber);
             if (swap)
@@ -250,7 +259,7 @@
                 return new NumberString(miniProduct);
             }
             bool applyEfficiency = false;
-            if(x.Length == y.Length && this.isTwoMultiple(x.Length))
+            if (x.Length == y.Length && this.isTwoMultiple(x.Length))
             {
                 applyEfficiency = true;
             }
@@ -258,16 +267,18 @@
             int xSecondHalfLength = (x.Length + 1) / 2;
             int yFirstHalfLength = y.Length / 2;
             int ySecondHalfLength = (y.Length + 1) / 2;
-            NumberString a = new NumberString(x.Substring(0, xFirstHalfLength));
-            NumberString b = new NumberString(x.Substring(xFirstHalfLength));
-            NumberString c = new NumberString(y.Substring(0, yFirstHalfLength));
-            NumberString d = new NumberString(y.Substring(yFirstHalfLength));
+            NumberString a = new NumberString(x.Substring(0, xFirstHalfLength), false);
+            NumberString b = new NumberString(x.Substring(xFirstHalfLength), false);
+            NumberString c = new NumberString(y.Substring(0, yFirstHalfLength), false);
+            NumberString d = new NumberString(y.Substring(yFirstHalfLength), false);
             NumberString firstProduct = a.Multiply(c);
+            NumberString acProduct = firstProduct.Clone();
             firstProduct.PadRight(xSecondHalfLength + ySecondHalfLength, '0');
             NumberString fourthProduct = b.Multiply(d), product;
             if (applyEfficiency)
             {
                 NumberString secondProduct = a.Add(b).Multiply(c.Add(d));
+                secondProduct = secondProduct.Subtract(acProduct).Subtract(fourthProduct);
                 secondProduct.PadRight(xSecondHalfLength, '0');
                 product = firstProduct.Add(secondProduct).Add(fourthProduct);
             }
