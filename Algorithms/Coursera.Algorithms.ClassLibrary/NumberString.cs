@@ -211,7 +211,15 @@
                 difference[iterX] = Convert.ToChar(miniDifference + 48);
             }
             string finalDiff = new string(difference);
+            if (finalDiff.Equals("0"))
+            {
+                return new NumberString(finalDiff);
+            }
             int indexOfNumber = finalDiff.IndexOfAny(NUMBERS);
+            if (indexOfNumber == -1 && finalDiff[finalDiff.Length - 1] == '0') // To handle the situations like "0" or "000" etc.
+            {
+                return new NumberString("0");
+            }
             finalDiff = finalDiff.Substring(indexOfNumber);
             if (swap)
             {
@@ -225,74 +233,86 @@
 
         public NumberString Multiply(NumberString anotherNumber)
         {
-            string x, y = anotherNumber.Number;
-            short negativeCount = 0;
-            if (this.IsNegative())
+            NumberString product = null, a = null, b = null, c = null, d = null;
+            try
             {
-                x = this.number.Substring(1);
-                negativeCount++;
-            }
-            else
-            {
-                x = this.number;
-            }
-            if (anotherNumber.IsNegative())
-            {
-                y = anotherNumber.Number.Substring(1);
-                negativeCount++;
-            }
-            else
-            {
-                y = anotherNumber.Number;
-            }
-            if (x.Equals(ZERO) || y.Equals(ZERO))
-            {
-                return new NumberString(ZERO);
-            }
-            if (x.Length == 1 && y.Length == 1)
-            {
-                int miniProduct = Convert.ToInt32(x) * Convert.ToInt32(y);
+                string x, y = anotherNumber.Number;
+                short negativeCount = 0;
+                if (this.IsNegative())
+                {
+                    x = this.number.Substring(1);
+                    negativeCount++;
+                }
+                else
+                {
+                    x = this.number;
+                }
+                if (anotherNumber.IsNegative())
+                {
+                    y = anotherNumber.Number.Substring(1);
+                    negativeCount++;
+                }
+                else
+                {
+                    y = anotherNumber.Number;
+                }
+                if (x.Equals(ZERO) || y.Equals(ZERO))
+                {
+                    return new NumberString(ZERO);
+                }
+                if (x.Length == 1 && y.Length == 1)
+                {
+                    int miniProduct = Convert.ToInt32(x) * Convert.ToInt32(y);
+                    if (negativeCount % 2 == 1)
+                    {
+                        return new NumberString("-" + miniProduct);
+                    }
+                    return new NumberString(miniProduct);
+                }
+                bool applyEfficiency = false;
+                if (x.Length == y.Length && this.isTwoMultiple(x.Length))
+                {
+                    applyEfficiency = true;
+                }
+                int xFirstHalfLength = x.Length / 2;
+                int xSecondHalfLength = (x.Length + 1) / 2;
+                int yFirstHalfLength = y.Length / 2;
+                int ySecondHalfLength = (y.Length + 1) / 2;
+                a = new NumberString(x.Substring(0, xFirstHalfLength), false);
+                b = new NumberString(x.Substring(xFirstHalfLength), false);
+                c = new NumberString(y.Substring(0, yFirstHalfLength), false);
+                d = new NumberString(y.Substring(yFirstHalfLength), false);
+                NumberString firstProduct = a.Multiply(c);
+                NumberString acProduct = firstProduct.Clone();
+                firstProduct.PadRight(xSecondHalfLength + ySecondHalfLength, '0');
+                NumberString fourthProduct = b.Multiply(d);
+                if (applyEfficiency)
+                {
+                    NumberString secondProduct = a.Add(b).Multiply(c.Add(d));
+                    secondProduct = secondProduct.Subtract(acProduct).Subtract(fourthProduct);
+                    secondProduct.PadRight(xSecondHalfLength, '0');
+                    product = firstProduct.Add(secondProduct).Add(fourthProduct);
+                }
+                else
+                {
+                    NumberString secondProduct = a.Multiply(d);
+                    secondProduct.PadRight(xSecondHalfLength, '0');
+                    NumberString thirdProduct = b.Multiply(c);
+                    thirdProduct.PadRight(ySecondHalfLength, '0');
+                    product = firstProduct.Add(secondProduct).Add(thirdProduct).Add(fourthProduct);
+                }
                 if (negativeCount % 2 == 1)
                 {
-                    return new NumberString("-" + miniProduct);
+                    return new NumberString("-" + product.Number);
                 }
-                return new NumberString(miniProduct);
             }
-            bool applyEfficiency = false;
-            if (x.Length == y.Length && this.isTwoMultiple(x.Length))
+            catch(Exception ex)
             {
-                applyEfficiency = true;
-            }
-            int xFirstHalfLength = x.Length / 2;
-            int xSecondHalfLength = (x.Length + 1) / 2;
-            int yFirstHalfLength = y.Length / 2;
-            int ySecondHalfLength = (y.Length + 1) / 2;
-            NumberString a = new NumberString(x.Substring(0, xFirstHalfLength), false);
-            NumberString b = new NumberString(x.Substring(xFirstHalfLength), false);
-            NumberString c = new NumberString(y.Substring(0, yFirstHalfLength), false);
-            NumberString d = new NumberString(y.Substring(yFirstHalfLength), false);
-            NumberString firstProduct = a.Multiply(c);
-            NumberString acProduct = firstProduct.Clone();
-            firstProduct.PadRight(xSecondHalfLength + ySecondHalfLength, '0');
-            NumberString fourthProduct = b.Multiply(d), product;
-            if (applyEfficiency)
-            {
-                NumberString secondProduct = a.Add(b).Multiply(c.Add(d));
-                secondProduct = secondProduct.Subtract(acProduct).Subtract(fourthProduct);
-                secondProduct.PadRight(xSecondHalfLength, '0');
-                product = firstProduct.Add(secondProduct).Add(fourthProduct);
-            }
-            else
-            {
-                NumberString secondProduct = a.Multiply(d);
-                secondProduct.PadRight(xSecondHalfLength, '0');
-                NumberString thirdProduct = b.Multiply(c);
-                thirdProduct.PadRight(ySecondHalfLength, '0');
-                product = firstProduct.Add(secondProduct).Add(thirdProduct).Add(fourthProduct);
-            }
-            if (negativeCount % 2 == 1)
-            {
-                return new NumberString("-" + product.Number);
+                Console.WriteLine(a.number);
+                Console.WriteLine(b.number);
+                Console.WriteLine(c.number);
+                Console.WriteLine(d.number);
+                throw ex;
             }
             return product;
         }

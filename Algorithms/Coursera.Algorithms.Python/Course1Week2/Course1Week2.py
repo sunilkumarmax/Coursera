@@ -57,7 +57,7 @@ def count_inversions(integer_array):
                      + merge_inversion.inversion_count)
 
 input_array = []
-filename = "c:/Users/v-sunvan/Documents/GitHub/Coursera/Algorithms/Coursera.Algorithms.Python/IntegerArray.txt"
+filename = "c:/Users/v-sunvan/Documents/GitHub/Coursera/Algorithms/Coursera.Algorithms.Python/Course1Week2/IntegerArray.txt"
 with open(filename, "r+") as textfile:
     for line_of_text in textfile:
         input_array.append(int(line_of_text))
